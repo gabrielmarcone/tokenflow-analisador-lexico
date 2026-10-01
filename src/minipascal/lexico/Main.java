@@ -6,7 +6,9 @@ import minipascal.lexico.io.LeitorArquivoFonte;
 import minipascal.lexico.model.Token;
 import minipascal.lexico.tabela.TabelaPalavrasReservadas;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +16,17 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Uso: java -cp out minipascal.lexico.Main <entrada.txt> [saida.txt]");
+            System.out.println("Uso: java -cp TokenFlow.jar minipascal.lexico.Main <entrada.txt> [saida.txt]");
             return;
         }
 
         String caminhoEntrada = args[0];
         String caminhoSaida = args.length >= 2 ? args[1] : gerarNomeSaida(caminhoEntrada);
+
+        if (new File(caminhoSaida).getAbsoluteFile().equals(new File(caminhoEntrada).getAbsoluteFile())) {
+            System.out.println("O arquivo de saida nao pode ser o mesmo da entrada.");
+            return;
+        }
 
         try {
             String fonte = LeitorArquivoFonte.ler(caminhoEntrada);
@@ -34,14 +41,15 @@ public class Main {
 
             EscritorArquivoSaida.escrever(caminhoSaida, tokens);
             System.out.println(tokens.size() + " tokens reconhecidos. Saida gravada em " + caminhoSaida);
+        } catch (NoSuchFileException e) {
+            System.out.println("Arquivo nao encontrado: " + e.getFile());
         } catch (IOException e) {
             System.out.println("Erro ao processar o arquivo: " + e.getMessage());
         }
     }
 
     private static String gerarNomeSaida(String caminhoEntrada) {
-        int ponto = caminhoEntrada.lastIndexOf('.');
-        String base = ponto >= 0 ? caminhoEntrada.substring(0, ponto) : caminhoEntrada;
-        return base + "_saida.txt";
+        File entrada = new File(caminhoEntrada);
+        return new File(entrada.getParentFile(), EscritorArquivoSaida.nomeDeSaidaPara(entrada.getName())).getPath();
     }
 }
