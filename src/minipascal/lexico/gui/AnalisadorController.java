@@ -70,6 +70,8 @@ public class AnalisadorController implements Initializable {
                                     TableColumn<Token, String> lexema,
                                     TableColumn<Token, String> tipo,
                                     TableColumn<Token, Number> linha) {
+        // A coluna # e a posicao do token na lista. So as linhas visiveis chamam
+        // indexOf, por isso o custo nao pesa mesmo com muitos tokens.
         numero.setCellValueFactory(dados ->
                 new SimpleIntegerProperty(tabelaTokens.getItems().indexOf(dados.getValue()) + 1));
         lexema.setCellValueFactory(dados ->
@@ -154,6 +156,8 @@ public class AnalisadorController implements Initializable {
         ultimosTokens = tokens;
         tabelaTokens.setItems(ultimosTokens);
 
+        // Os erros ficam na lista de tokens (na ordem do codigo) e tambem na
+        // tabela de baixo, para o usuario ver so os problemas.
         ObservableList<Token> erros = FXCollections.observableArrayList();
         for (Token t : ultimosTokens) {
             if (t.getTipo() == TipoToken.ERRO_LEXICO) {
