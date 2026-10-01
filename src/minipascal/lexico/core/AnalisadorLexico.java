@@ -44,10 +44,10 @@ public class AnalisadorLexico {
         char c = fonte.charAt(pos);
         int linhaToken = linha;
 
-        if (Character.isLetter(c)) {
+        if (ehLetra(c)) {
             return lerIdentificadorOuPalavra(linhaToken);
         }
-        if (Character.isDigit(c)) {
+        if (ehDigito(c)) {
             return lerNumero(linhaToken);
         }
         if (c == '"') {
@@ -95,8 +95,10 @@ public class AnalisadorLexico {
                 pos++;
                 return new Token(".", TipoToken.FIM, linhaToken);
             default:
-                pos++;
-                return new Token(String.valueOf(c), TipoToken.ERRO_LEXICO, linhaToken);
+                int tamanho = Character.charCount(fonte.codePointAt(pos));
+                String invalido = fonte.substring(pos, pos + tamanho);
+                pos += tamanho;
+                return new Token(invalido, TipoToken.ERRO_LEXICO, linhaToken);
         }
     }
 
@@ -107,10 +109,9 @@ public class AnalisadorLexico {
         while (pos < fonte.length()) {
             char c = fonte.charAt(pos);
 
-            if (c == '\n') {
-                linha++;
-                pos++;
-            } else if (Character.isWhitespace(c)) {
+            if (ehQuebraDeLinha(c)) {
+                avancarContandoLinha();
+            } else if (ehEspaco(c)) {
                 pos++;
             } else if (c == '/' && caractereSeguinteEh('*')) {
                 int linhaAbertura = linha;
@@ -129,10 +130,7 @@ public class AnalisadorLexico {
     private boolean pularComentario() {
         pos += 2; // "/*"
         while (pos < fonte.length() && !(fonte.charAt(pos) == '*' && caractereSeguinteEh('/'))) {
-            if (fonte.charAt(pos) == '\n') {
-                linha++;
-            }
-            pos++;
+            avancarContandoLinha();
         }
         if (pos >= fonte.length()) {
             return false;
@@ -141,9 +139,38 @@ public class AnalisadorLexico {
         return true;
     }
 
+    // Avança um caractere e soma uma linha se ele for uma quebra. O "\r\n"
+    // do Windows conta uma vez só (na hora do '\n'); um '\r' sozinho
+    // (arquivos de Mac antigo) também encerra a linha.
+    private void avancarContandoLinha() {
+        char c = fonte.charAt(pos);
+        if (c == '\n' || (c == '\r' && !caractereSeguinteEh('\n'))) {
+            linha++;
+        }
+        pos++;
+    }
+
+    private static boolean ehQuebraDeLinha(char c) {
+        return c == '\n' || c == '\r';
+    }
+
+    private static boolean ehEspaco(char c) {
+        return c == ' ' || c == '\t' || c == '\f' || c == '\u000B';
+    }
+
+    // Letras do alfabeto latino, com ou sem acento (o enunciado usa "variável"
+    // como exemplo de identificador). Letras de outros alfabetos são erro.
+    private static boolean ehLetra(char c) {
+        return Character.isLetter(c) && Character.UnicodeScript.of(c) == Character.UnicodeScript.LATIN;
+    }
+
+    private static boolean ehDigito(char c) {
+        return c >= '0' && c <= '9';
+    }
+
     private Token lerIdentificadorOuPalavra(int linhaToken) {
         int inicio = pos;
-        while (pos < fonte.length() && (Character.isLetterOrDigit(fonte.charAt(pos)) || fonte.charAt(pos) == '_')) {
+        while (pos < fonte.length() && (ehLetra(fonte.charAt(pos)) || ehDigito(fonte.charAt(pos)) || fonte.charAt(pos) == '_')) {
             pos++;
         }
         int fim = Math.min(pos, inicio + TAMANHO_MAXIMO_IDENTIFICADOR);
@@ -157,13 +184,13 @@ public class AnalisadorLexico {
     // ponteiro volta pra onde estava e o número fica só com a parte válida.
     private Token lerNumero(int linhaToken) {
         int inicio = pos;
-        while (pos < fonte.length() && Character.isDigit(fonte.charAt(pos))) {
+        while (pos < fonte.length() && ehDigito(fonte.charAt(pos))) {
             pos++;
         }
 
         if (pos < fonte.length() && fonte.charAt(pos) == '.' && proximoCaractereEhDigito()) {
             pos++;
-            while (pos < fonte.length() && Character.isDigit(fonte.charAt(pos))) {
+            while (pos < fonte.length() && ehDigito(fonte.charAt(pos))) {
                 pos++;
             }
             lerExpoenteSePresente();
@@ -183,8 +210,8 @@ public class AnalisadorLexico {
         if (pos < fonte.length() && (fonte.charAt(pos) == '+' || fonte.charAt(pos) == '-')) {
             pos++;
         }
-        if (pos < fonte.length() && Character.isDigit(fonte.charAt(pos))) {
-            while (pos < fonte.length() && Character.isDigit(fonte.charAt(pos))) {
+        if (pos < fonte.length() && ehDigito(fonte.charAt(pos))) {
+            while (pos < fonte.length() && ehDigito(fonte.charAt(pos))) {
                 pos++;
             }
         } else {
@@ -194,14 +221,14 @@ public class AnalisadorLexico {
 
     // Strings da linguagem são sempre de uma linha só (nenhum exemplo do
     // enunciado mostra string multi-linha). Por isso, se não fechar antes
-    // de uma quebra de linha, paramos ali — sem consumir o '\n' — e
+    // de uma quebra de linha, paramos ali — sem consumir o '\r' ou '\n' — e
     // devolvemos o controle pro scanner normal, que trata a quebra de
     // linha como não-significativa e segue tokenizando o resto do arquivo.
     // Isso evita que uma aspa esquecida engula o programa inteiro até o EOF.
     private Token lerString(int linhaToken) {
         int inicio = pos;
         pos++;
-        while (pos < fonte.length() && fonte.charAt(pos) != '"' && fonte.charAt(pos) != '\n') {
+        while (pos < fonte.length() && fonte.charAt(pos) != '"' && !ehQuebraDeLinha(fonte.charAt(pos))) {
             pos++;
         }
         boolean fechada = pos < fonte.length() && fonte.charAt(pos) == '"';
@@ -218,9 +245,10 @@ public class AnalisadorLexico {
     private Token lerChar(int linhaToken) {
         int inicio = pos;
         pos++;
-        boolean temUmCaractere = pos < fonte.length() && fonte.charAt(pos) != '\'' && fonte.charAt(pos) != '\n';
+        boolean temUmCaractere = pos < fonte.length()
+                && fonte.charAt(pos) != '\'' && !ehQuebraDeLinha(fonte.charAt(pos));
         if (temUmCaractere) {
-            pos++;
+            pos += Character.charCount(fonte.codePointAt(pos));
         }
         boolean fechado = temUmCaractere && pos < fonte.length() && fonte.charAt(pos) == '\'';
         if (fechado) {
@@ -270,6 +298,6 @@ public class AnalisadorLexico {
     }
 
     private boolean proximoCaractereEhDigito() {
-        return pos + 1 < fonte.length() && Character.isDigit(fonte.charAt(pos + 1));
+        return pos + 1 < fonte.length() && ehDigito(fonte.charAt(pos + 1));
     }
 }

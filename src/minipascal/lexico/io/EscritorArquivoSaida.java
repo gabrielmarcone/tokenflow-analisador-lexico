@@ -14,6 +14,13 @@ import java.util.List;
  */
 public class EscritorArquivoSaida {
 
+    /** "prog.txt" -> "prog_saida.txt"; sem extensão, só acrescenta o sufixo. */
+    public static String nomeDeSaidaPara(String nomeArquivo) {
+        int ponto = nomeArquivo.lastIndexOf('.');
+        String base = ponto > 0 ? nomeArquivo.substring(0, ponto) : nomeArquivo;
+        return base + "_saida.txt";
+    }
+
     public static void escrever(String caminho, List<Token> tokens) throws IOException {
         StringBuilder conteudo = new StringBuilder();
         for (Token token : tokens) {

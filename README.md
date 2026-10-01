@@ -9,7 +9,7 @@
 ![Java](https://img.shields.io/badge/Java-8-orange?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-Interface%20Gráfica-blue?logo=java&logoColor=white)
 ![Status](https://img.shields.io/badge/Unidade%20I-Concluída-brightgreen)
-![Testes](https://img.shields.io/badge/testes%20automatizados-96%20passing-success)
+![Testes](https://img.shields.io/badge/testes%20automatizados-122%20passing-success)
 
 </div>
 
@@ -36,7 +36,7 @@ derrubam o resto do arquivo.
 - ✅ Reconhece todas as classes léxicas do enunciado: palavra reservada, identificador,
   número inteiro/real (com notação científica), operadores aritméticos/relacionais/lógicos,
   símbolo especial, atribuição, fim, constante string e char
-- ✅ Tabela de **48 palavras reservadas** oficiais + `mod`/`and`/`or`/`not`, busca O(1),
+- ✅ Tabela com as **48 palavras reservadas** do enunciado + `downto` + `mod`/`and`/`or`/`not`, busca O(1),
   **case-insensitive** (`Program`, `PROGRAM` e `program` são todos reconhecidos)
 - ✅ Comentários de bloco `/* */`, inclusive multilinha, com recuperação de erro se não
   fecharem
@@ -44,9 +44,9 @@ derrubam o resto do arquivo.
 - ✅ Limite de 63 caracteres em identificadores (truncamento, não erro)
 - ✅ Interface gráfica: carregar um `.txt` **ou** digitar/colar código direto na tela
 - ✅ Modo linha de comando, pra rodar em lote ou sem interface
-- ✅ **96 verificações automatizadas**, incluindo uma bateria dedicada a casos absurdos
-  (número colado em identificador, operadores repetidos sem espaço, comentário "aninhado",
-  CRLF do Windows, Unicode inválido...)
+- ✅ **122 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
+  robustez (número colado em identificador, operadores repetidos sem espaço, comentário
+  "aninhado", CRLF e CR solto, emoji, arquivo ANSI/UTF-16, locale turco...)
 - ✅ 7 arquivos de teste de integração, incluindo os exemplos exatos do enunciado
 
 ## Arquitetura
@@ -66,77 +66,75 @@ src/minipascal/lexico/
 └── Main.java        → ponto de entrada da versão linha de comando
 ```
 
-```
-resources/minipascal/lexico/gui/
-├── Main.fxml         → layout da interface
-├── application.css   → estilo visual (gradientes, vidro, sem imagem externa)
-└── icon.png           → ícone da janela
-```
+Os recursos da interface (`Main.fxml`, `application.css`, `icon.png`) ficam na mesma pasta
+da classe que os carrega, `src/minipascal/lexico/gui/`.
 
 ## Como rodar
 
 ### Pré-requisito
 
-**JDK 8** com JavaFX embutido (ex: Oracle JDK 8u202). Confirme com:
-```bash
-java -version
-```
+**JDK 8** com JavaFX embutido (ex: Oracle JDK 8u202).
 
-> ⚠️ Se você tiver mais de um JDK instalado, garanta que os comandos abaixo estão usando o
-> JDK 8 - se tiver dúvida, chame o `java`/`javac` pelo caminho completo
-> (`"C:\Program Files\Java\jdk1.8.0_202\bin\java.exe"`).
+### Rodar direto (sem compilar)
 
-### 1. Compilar
-
-**Linux/macOS/Git Bash:**
-```bash
-javac --release 8 -encoding UTF-8 -d out $(find src -name "*.java")
-```
-
-**PowerShell:**
-```powershell
-mkdir out
-javac -encoding UTF-8 -d out (Get-ChildItem -Path src -Recurse -Filter *.java).FullName
-```
-
-### 2. Rodar a interface gráfica
-
-Os recursos (`Main.fxml`, `application.css`, `icon.png`) precisam estar na mesma pasta dos
-`.class` compilados - o `javac` não copia isso sozinho:
+O `TokenFlow.jar` já vem no repositório:
 
 ```bash
-cp resources/minipascal/lexico/gui/*.fxml resources/minipascal/lexico/gui/*.css resources/minipascal/lexico/gui/*.png out/minipascal/lexico/gui/
-java -cp out minipascal.lexico.gui.MainApp
-```
-*(no PowerShell, troque `cp` por `Copy-Item` e `:` por `;` no classpath se for usar mais de
-uma pasta)*
-
-### 3. Rodar via linha de comando (sem interface)
-
-```bash
-java -cp out minipascal.lexico.Main caminho/entrada.txt caminho/saida.txt
-```
-Se omitir o segundo argumento, a saída é gravada como `<entrada>_saida.txt`.
-
-### 4. Empacotar um `.jar` executável
-
-```bash
-echo "Main-Class: minipascal.lexico.gui.MainApp" > manifest.txt
-jar cfm TokenFlow.jar manifest.txt -C out .
 java -jar TokenFlow.jar
 ```
+
+No Windows também funciona com duplo clique no arquivo.
+
+### Compilar e gerar o jar de novo
+
+Um comando só, na raiz do projeto:
+
+| Sistema | Comando |
+|---|---|
+| Windows (PowerShell, CMD ou duplo clique) | `.\build.bat` |
+| Linux, macOS ou Git Bash | `./build.sh` |
+
+O script compila tudo, copia o FXML/CSS/ícone para dentro do jar e gera o `TokenFlow.jar`.
+No Windows ele procura sozinho o JDK 8 em `C:\Program Files\Java\jdk1.8*`, então não
+importa qual `java` está primeiro no `PATH`.
+
+Para compilar **e** rodar todas as verificações automatizadas:
+
+```bash
+.\build.bat teste       # Windows
+./build.sh teste       # Linux, macOS, Git Bash
+```
+
+### Linha de comando (sem interface)
+
+```bash
+java -cp TokenFlow.jar minipascal.lexico.Main caminho/entrada.txt caminho/saida.txt
+```
+Se omitir o segundo argumento, a saída é gravada ao lado da entrada como
+`<entrada>_saida.txt`.
+
+### Rodar a partir do código-fonte, sem o script
+
+```bash
+javac -encoding UTF-8 -d out $(find src -name "*.java")
+cp src/minipascal/lexico/gui/*.fxml src/minipascal/lexico/gui/*.css src/minipascal/lexico/gui/*.png out/minipascal/lexico/gui/
+java -cp out minipascal.lexico.gui.MainApp
+```
+Em IDEs (IntelliJ, VS Code) basta abrir a pasta: `src` é a única raiz de código e os
+recursos já estão nela.
 
 ## Como rodar os testes
 
 Cada suíte é uma classe Java independente (sem JUnit), que imprime `[OK]`/`[FALHA]` linha a
-linha e termina com um resumo:
+linha e termina com um resumo. `.\build.bat teste` roda todas; para rodar uma só:
 
 ```bash
-java -cp out minipascal.lexico.verificacao.VerificacaoFase3     # model + tabela
-java -cp out minipascal.lexico.verificacao.VerificacaoFase4     # núcleo do lexer
-java -cp out minipascal.lexico.verificacao.VerificacaoFase5     # comentários e erros
-java -cp out minipascal.lexico.verificacao.VerificacaoFase6     # leitura/escrita de arquivo
-java -cp out minipascal.lexico.verificacao.VerificacaoAbsurda   # casos extremos/maldosos
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase3     # model + tabela
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase4     # núcleo do lexer
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase5     # comentários e erros
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase6     # leitura/escrita de arquivo
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoAbsurda   # casos extremos/maldosos
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoRobustez  # Unicode, codificações, CLI
 ```
 
 ## Arquivos de teste
@@ -161,6 +159,15 @@ ambíguo - todas documentadas e testadas:
 - **`div` é Palavra reservada** (está na lista oficial); **`mod` é Operador aritmético**
   (não está na lista, mas é exigido pelo enunciado)
 - **Identificador precisa começar com letra** - `_` só é permitido no meio
+- **Letras são do alfabeto latino, com ou sem acento** (o enunciado usa `variável` como
+  exemplo de identificador); dígitos são só `0-9`. Letras de outros alfabetos (`π`, `日本`),
+  dígitos de outros alfabetos e emoji fora de string/comentário viram erro léxico (um erro
+  por caractere)
+- **`dowto`**: o enunciado lista `DOWTO` (provável erro de digitação de `downto`); as duas
+  grafias são palavras reservadas
+- **Quebra de linha**: `\n`, `\r\n` e `\r` sozinho contam uma linha cada
+- **Codificação do arquivo**: UTF-8 (com ou sem BOM); se não for UTF-8 válido, lê como
+  ANSI (ISO-8859-1), e UTF-16 com BOM também é reconhecido
 - **Constante char aceita exatamente 1 caractere** - vazio (`''`) ou múltiplo (`'ab'`) são erro
 - **String não fechada é limitada à linha atual** - evita que uma aspa esquecida engula o
   resto do arquivo inteiro

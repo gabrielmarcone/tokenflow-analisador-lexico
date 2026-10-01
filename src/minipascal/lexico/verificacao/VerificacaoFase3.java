@@ -41,8 +41,8 @@ public class VerificacaoFase3 {
         checar("'Media_das_medias' deve retornar null (não é reservada)",
                 tabela.buscar("Media_das_medias") == null);
 
-        checar("tabela deve ter 52 entradas",
-                tabela.tamanho() == 52);
+        checar("tabela deve ter 53 entradas",
+                tabela.tamanho() == 53);
 
         Token t = new Token("program", TipoToken.PALAVRA_RESERVADA, 1);
         checar("Token.toString() deve ser 'program\\tPalavra reservada'",

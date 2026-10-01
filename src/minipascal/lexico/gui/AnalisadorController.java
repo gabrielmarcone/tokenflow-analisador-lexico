@@ -184,16 +184,13 @@ public class AnalisadorController implements Initializable {
         }
     }
 
-    // Sugere "<nomeDoArquivoAberto>_saida.txt", mesma convenção usada por
-    // Main.gerarNomeSaida() — mantém consistência com o CLI já existente.
+    // Sugere "<nomeDoArquivoAberto>_saida.txt", mesma convenção do CLI.
     // Se o código foi digitado na hora (sem carregar arquivo), usa um nome
-    // genérico em vez de tentar aproveitar o texto de placeholder do label.
+    // genérico.
     private String sugerirNomeSaida() {
         if (nomeArquivoCarregado == null) {
             return "saida.txt";
         }
-        int ponto = nomeArquivoCarregado.lastIndexOf('.');
-        String base = ponto >= 0 ? nomeArquivoCarregado.substring(0, ponto) : nomeArquivoCarregado;
-        return base + "_saida.txt";
+        return EscritorArquivoSaida.nomeDeSaidaPara(nomeArquivoCarregado);
     }
 }

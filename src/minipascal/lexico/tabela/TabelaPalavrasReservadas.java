@@ -3,6 +3,7 @@ package minipascal.lexico.tabela;
 import minipascal.lexico.model.TipoToken;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class TabelaPalavrasReservadas {
     private void construirTabela() {
         String[] palavrasReservadas = {
             "absolute", "array", "begin", "case", "char", "const", "div", "do",
-            "downto", "else", "end", "external", "file", "for", "forward", "func",
+            "downto", "dowto", "else", "end", "external", "file", "for", "forward", "func",
             "function", "goto", "if", "implementation", "integer", "interface",
             "interrupt", "label", "main", "nil", "nit", "of", "packed", "proc",
             "program", "real", "record", "repeat", "set", "shl", "shr", "string",
@@ -41,11 +42,11 @@ public class TabelaPalavrasReservadas {
     }
 
     public TipoToken buscar(String lexema) {
-        return tabela.get(lexema.toLowerCase());
+        return tabela.get(lexema.toLowerCase(Locale.ROOT));
     }
 
     public boolean contem(String lexema) {
-        return tabela.containsKey(lexema);
+        return buscar(lexema) != null;
     }
 
     public int tamanho() {
