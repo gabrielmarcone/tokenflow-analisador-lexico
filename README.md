@@ -101,7 +101,7 @@ Um comando só, na raiz do projeto:
 | Sistema | Comando |
 |---|---|
 | Windows (PowerShell, CMD ou duplo clique) | `.\build.bat` |
-| Linux, macOS ou Git Bash | `./build.sh` |
+| Linux, macOS ou Git Bash | `sh build.sh` |
 
 O script compila tudo, copia o FXML/CSS/ícone para dentro do jar e gera o `TokenFlow.jar`.
 No Windows ele procura sozinho o JDK 8 em `C:\Program Files\Java\jdk1.8*`, então não
@@ -111,7 +111,7 @@ Para compilar **e** rodar todas as verificações automatizadas:
 
 ```bash
 .\build.bat teste       # Windows
-./build.sh teste       # Linux, macOS, Git Bash
+sh build.sh teste      # Linux, macOS, Git Bash
 ```
 
 ### Linha de comando (sem interface)
@@ -181,6 +181,31 @@ ambíguo - todas documentadas e testadas:
 - **String não fechada é limitada à linha atual** - evita que uma aspa esquecida engula o
   resto do arquivo inteiro
 - **Limite de 63 caracteres em identificador** - o excedente é truncado, não vira erro
+
+## Decisões pedidas no enunciado
+
+Respostas às perguntas de projeto (a-e) da especificação:
+
+- **a) Limite para identificadores?** Sim, 63 caracteres. O que passar disso é truncado
+  (o token tem os 63 primeiros caracteres) e não vira erro.
+- **b) Formato dos tokens?** Texto, sem código numérico. A palavra reservada `program` sai
+  como `program<TAB>Palavra reservada`. As classes são: Palavra reservada, Identificador,
+  Número inteiro, Número real, Operador aritmético, Operador relacional, Operador lógico,
+  Símbolo especial, Atribuição, Fim, Constante string, Constante char e Erro léxico.
+  O `=` é Operador relacional (aparece nas duas listas do enunciado; os demais símbolos
+  especiais `( ) , ; :` não têm ambiguidade).
+- **c) Tabela de palavras reservadas?** Opção (a) do enunciado: uma função constrói a tabela
+  uma única vez, no início da execução (`TabelaPalavrasReservadas`). A estrutura é um
+  `HashMap` com busca O(1), chave em minúsculas, e funções `buscar`, `contem` e `tamanho`.
+- **d) Quem preenche a tabela de símbolos?** Nesta unidade não há tabela de símbolos: a tabela
+  contém só palavras reservadas e `mod`/`and`/`or`/`not`. O analisador léxico apenas
+  classifica os identificadores; quem inserir informações (tipo, escopo) na tabela de
+  símbolos será o analisador sintático/semântico, na Unidade II.
+- **e) Tratamento de erros léxicos?** Modo pânico: o erro é registrado como token
+  `Erro léxico`, o analisador descarta só o trecho inválido e continua a partir do próximo
+  caractere. Caractere fora da linguagem gera um erro por caractere; string e char mal
+  fechados param no fim da linha; comentário sem `*/` gera um erro `/*` na linha de abertura.
+  Na interface, a tabela de erros mostra a linha, o lexema e uma descrição do problema.
 
 ## Contexto acadêmico
 

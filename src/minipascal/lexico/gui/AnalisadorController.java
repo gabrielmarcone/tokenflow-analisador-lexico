@@ -89,7 +89,23 @@ public class AnalisadorController implements Initializable {
         lexema.setCellValueFactory(dados ->
                 new SimpleStringProperty(dados.getValue().getLexema()));
         descricao.setCellValueFactory(dados ->
-                new SimpleStringProperty(dados.getValue().getTipo().getDescricao()));
+                new SimpleStringProperty(descreverErro(dados.getValue())));
+    }
+
+    // O lexema do erro indica o que deu errado: o analisador devolve a string
+    // ou o char parcial, o "/*" do comentário aberto, ou o caractere isolado.
+    private static String descreverErro(Token erro) {
+        String lexema = erro.getLexema();
+        if (lexema.equals("/*")) {
+            return "Comentário não fechado (falta */)";
+        }
+        if (lexema.startsWith("\"")) {
+            return "String não fechada (falta \")";
+        }
+        if (lexema.startsWith("'")) {
+            return "Char deve ter 1 caractere";
+        }
+        return "Caractere inválido";
     }
 
     @FXML
