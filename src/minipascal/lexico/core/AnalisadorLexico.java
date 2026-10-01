@@ -19,6 +19,8 @@ public class AnalisadorLexico {
     private final TabelaPalavrasReservadas palavrasReservadas;
     private int pos;
     private int linha;
+    // Comentario aberto sem "*/" e detectado dentro de pularNaoSignificativos();
+    // o flag e a linha de abertura voltam para proximoToken() montar o erro.
     private boolean comentarioNaoFechado;
     private int linhaComentarioNaoFechado;
 
@@ -29,10 +31,15 @@ public class AnalisadorLexico {
         this.linha = 1;
     }
 
+    // Cada chamada: ignora espacos e comentarios, depois escolhe a rotina de
+    // leitura pelo primeiro caractere (lookahead de 1) e le o maior lexema
+    // possivel a partir dali. Devolve null quando o arquivo termina.
     public Token proximoToken() {
         comentarioNaoFechado = false;
         pularNaoSignificativos();
 
+        // O erro de comentario e entregue no lugar do proximo token. Como a
+        // leitura chegou ao fim do arquivo, a chamada seguinte devolve null.
         if (comentarioNaoFechado) {
             return new Token("/*", TipoToken.ERRO_LEXICO, linhaComentarioNaoFechado);
         }
@@ -42,6 +49,7 @@ public class AnalisadorLexico {
         }
 
         char c = fonte.charAt(pos);
+        // Linha onde o token comeca, guardada antes de a leitura avancar pos.
         int linhaToken = linha;
 
         if (ehLetra(c)) {
@@ -95,6 +103,8 @@ public class AnalisadorLexico {
                 pos++;
                 return new Token(".", TipoToken.FIM, linhaToken);
             default:
+                // Simbolo fora da linguagem: um erro por caractere. Usa code point
+                // para que um emoji (dois chars) seja um erro so, nao dois.
                 int tamanho = Character.charCount(fonte.codePointAt(pos));
                 String invalido = fonte.substring(pos, pos + tamanho);
                 pos += tamanho;
@@ -168,6 +178,10 @@ public class AnalisadorLexico {
         return c >= '0' && c <= '9';
     }
 
+    // Le o identificador inteiro, mas o lexema guarda so os 63 primeiros
+    // caracteres; o excedente e consumido para nao virar um segundo token.
+    // A mesma busca na tabela decide entre palavra reservada, mod/and/or/not
+    // e identificador comum.
     private Token lerIdentificadorOuPalavra(int linhaToken) {
         int inicio = pos;
         while (pos < fonte.length() && (ehLetra(fonte.charAt(pos)) || ehDigito(fonte.charAt(pos)) || fonte.charAt(pos) == '_')) {
@@ -258,6 +272,8 @@ public class AnalisadorLexico {
         return new Token(lexema, fechado ? TipoToken.CONSTANTE_CHAR : TipoToken.ERRO_LEXICO, linhaToken);
     }
 
+    // lerMaior, lerMenor e lerDoisPontos leem o operador mais longo possivel
+    // (>=, <=, <>, :=). O caractere ja foi confirmado, entao pos++ vem primeiro.
     private Token lerMaior(int linhaToken) {
         pos++;
         if (proximoCaractereEh('=')) {
@@ -289,14 +305,17 @@ public class AnalisadorLexico {
         return new Token(":", TipoToken.SIMBOLO_ESPECIAL, linhaToken);
     }
 
+    // Compara o caractere em pos.
     private boolean proximoCaractereEh(char esperado) {
         return pos < fonte.length() && fonte.charAt(pos) == esperado;
     }
 
+    // Compara o caractere em pos + 1, sem consumir nada.
     private boolean caractereSeguinteEh(char esperado) {
         return pos + 1 < fonte.length() && fonte.charAt(pos + 1) == esperado;
     }
 
+    // Usado em lerNumero, onde pos esta no ponto: o digito esperado fica em pos + 1.
     private boolean proximoCaractereEhDigito() {
         return pos + 1 < fonte.length() && ehDigito(fonte.charAt(pos + 1));
     }

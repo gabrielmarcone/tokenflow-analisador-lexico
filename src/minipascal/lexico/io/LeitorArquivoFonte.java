@@ -28,6 +28,8 @@ public class LeitorArquivoFonte {
     }
 
     private static String decodificar(byte[] bytes) {
+        // Os bytes FF FE e FE FF (marca de UTF-16) nao sao UTF-8 valido, entao
+        // precisam ser testados antes da tentativa de UTF-8.
         if (bytes.length >= 2) {
             int b0 = bytes[0] & 0xFF;
             int b1 = bytes[1] & 0xFF;
@@ -45,6 +47,7 @@ public class LeitorArquivoFonte {
                     .decode(ByteBuffer.wrap(bytes))
                     .toString();
         } catch (CharacterCodingException e) {
+            // Byte invalido em UTF-8: assume arquivo ANSI (acentos em 1 byte).
             return new String(bytes, StandardCharsets.ISO_8859_1);
         }
     }

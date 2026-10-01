@@ -20,6 +20,9 @@ public class TabelaPalavrasReservadas {
     }
 
     private void construirTabela() {
+        // Lista do enunciado. "nit" e "dowto" estao assim la (provaveis erros de
+        // digitacao de "nil" e "downto") e foram mantidos; "downto" tambem entra
+        // por ser a grafia correta do Pascal.
         String[] palavrasReservadas = {
             "absolute", "array", "begin", "case", "char", "const", "div", "do",
             "downto", "dowto", "else", "end", "external", "file", "for", "forward", "func",
@@ -33,7 +36,8 @@ public class TabelaPalavrasReservadas {
             tabela.put(palavra, TipoToken.PALAVRA_RESERVADA);
         }
 
-        // operador aritmetico
+        // Nao estao na lista de palavras reservadas, mas o enunciado os trata como
+        // operadores: mod e aritmetico; and, or e not sao logicos.
         tabela.put("mod", TipoToken.OPERADOR_ARITMETICO);
 
         tabela.put("and", TipoToken.OPERADOR_LOGICO);
@@ -41,6 +45,9 @@ public class TabelaPalavrasReservadas {
         tabela.put("not", TipoToken.OPERADOR_LOGICO);
     }
 
+    // Retorna null se o lexema nao esta na tabela (ou seja, e identificador).
+    // Locale.ROOT garante o mesmo resultado em qualquer idioma do sistema; no
+    // turco, por exemplo, "I".toLowerCase() viraria "i" sem ponto e nao acharia "integer".
     public TipoToken buscar(String lexema) {
         return tabela.get(lexema.toLowerCase(Locale.ROOT));
     }
