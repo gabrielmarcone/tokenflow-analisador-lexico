@@ -77,13 +77,22 @@ da classe que os carrega, `src/minipascal/lexico/gui/`.
 
 ### Rodar direto (sem compilar)
 
-O `TokenFlow.jar` já vem no repositório:
+O `TokenFlow.jar` já vem no repositório. No Windows, dê duplo clique em `TokenFlow.bat`: ele
+procura o JDK 8 em `C:\Program Files\Java` e abre o programa com ele, não importa qual
+`java` esteja no `PATH`.
+
+Pelo terminal, só funciona se o `java` do `PATH` for o JDK 8 (os Java 11+ não trazem o
+JavaFX e dão `NoClassDefFoundError: javafx/application/Application`):
 
 ```bash
 java -jar TokenFlow.jar
 ```
 
-No Windows também funciona com duplo clique no arquivo.
+Se o `PATH` apontar para outro Java, chame o JDK 8 pelo caminho completo:
+
+```powershell
+& "C:\Program Files\Java\jdk1.8.0_202\bin\java.exe" -jar TokenFlow.jar
+```
 
 ### Compilar e gerar o jar de novo
 
