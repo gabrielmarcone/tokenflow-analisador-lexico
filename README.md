@@ -8,7 +8,6 @@
 
 ![Java](https://img.shields.io/badge/Java-8-orange?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-Interface%20Gráfica-blue?logo=java&logoColor=white)
-![Status](https://img.shields.io/badge/Unidade%20I-Concluída-brightgreen)
 ![Testes](https://img.shields.io/badge/testes%20automatizados-122%20passing-success)
 
 </div>
@@ -210,9 +209,6 @@ Respostas às perguntas de projeto (a-e) da especificação:
 ## Contexto acadêmico
 
 Trabalho da disciplina de **Compiladores**, curso de Ciência da Computação - UESB.
-Corresponde à **Unidade I** (Analisador Léxico). O núcleo (`AnalisadorLexico`) foi projetado
-para ser reaproveitado sem modificações na Unidade II (Analisador Sintático), já que não
-depende de nada relacionado a arquivo ou interface.
 
 ## Autores
 
