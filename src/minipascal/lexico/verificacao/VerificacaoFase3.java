@@ -26,6 +26,11 @@ public class VerificacaoFase3 {
         checar("'PROGRAM' (tudo maiúsculo) também deve ser Palavra reservada",
                 tabela.buscar("PROGRAM") == TipoToken.PALAVRA_RESERVADA);
 
+        checar("'downto' deve ser Palavra reservada",
+                tabela.buscar("downto") == TipoToken.PALAVRA_RESERVADA);
+        checar("'dowto' (grafia do enunciado) não é reservada, é identificador",
+                tabela.buscar("dowto") == null);
+
         checar("'mod' deve ser Operador aritmetico",
                 tabela.buscar("mod") == TipoToken.OPERADOR_ARITMETICO);
 
@@ -41,8 +46,8 @@ public class VerificacaoFase3 {
         checar("'Media_das_medias' deve retornar null (não é reservada)",
                 tabela.buscar("Media_das_medias") == null);
 
-        checar("tabela deve ter 53 entradas",
-                tabela.tamanho() == 53);
+        checar("tabela deve ter 52 entradas (48 reservadas, mod, and, or, not)",
+                tabela.tamanho() == 52);
 
         Token t = new Token("program", TipoToken.PALAVRA_RESERVADA, 1);
         checar("Token.toString() deve ser 'program\\tPalavra reservada'",

@@ -20,12 +20,11 @@ public class TabelaPalavrasReservadas {
     }
 
     private void construirTabela() {
-        // Lista do enunciado. "nit" e "dowto" estao assim la (provaveis erros de
-        // digitacao de "nil" e "downto") e foram mantidos; "downto" tambem entra
-        // por ser a grafia correta do Pascal.
+        // Lista do enunciado (48 palavras). O enunciado escreve "DOWTO", lido aqui
+        // como "downto", a grafia do Pascal. "nit" consta na lista e foi mantido.
         String[] palavrasReservadas = {
             "absolute", "array", "begin", "case", "char", "const", "div", "do",
-            "downto", "dowto", "else", "end", "external", "file", "for", "forward", "func",
+            "downto", "else", "end", "external", "file", "for", "forward", "func",
             "function", "goto", "if", "implementation", "integer", "interface",
             "interrupt", "label", "main", "nil", "nit", "of", "packed", "proc",
             "program", "real", "record", "repeat", "set", "shl", "shr", "string",

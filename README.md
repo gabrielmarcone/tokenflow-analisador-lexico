@@ -8,7 +8,7 @@
 
 ![Java](https://img.shields.io/badge/Java-8-orange?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-Interface%20Gráfica-blue?logo=java&logoColor=white)
-![Testes](https://img.shields.io/badge/testes%20automatizados-122%20passing-success)
+![Testes](https://img.shields.io/badge/testes%20automatizados-124%20passing-success)
 
 </div>
 
@@ -35,7 +35,7 @@ derrubam o resto do arquivo.
 - ✅ Reconhece todas as classes léxicas do enunciado: palavra reservada, identificador,
   número inteiro/real (com notação científica), operadores aritméticos/relacionais/lógicos,
   símbolo especial, atribuição, fim, constante string e char
-- ✅ Tabela com as **48 palavras reservadas** do enunciado + `downto` + `mod`/`and`/`or`/`not`, busca O(1),
+- ✅ Tabela com as **48 palavras reservadas** do enunciado (`DOWTO` lido como `downto`) + `mod`/`and`/`or`/`not`, busca O(1),
   **case-insensitive** (`Program`, `PROGRAM` e `program` são todos reconhecidos)
 - ✅ Comentários de bloco `/* */`, inclusive multilinha, com recuperação de erro se não
   fecharem
@@ -43,7 +43,7 @@ derrubam o resto do arquivo.
 - ✅ Limite de 63 caracteres em identificadores (truncamento, não erro)
 - ✅ Interface gráfica: carregar um `.txt` **ou** digitar/colar código direto na tela
 - ✅ Modo linha de comando, pra rodar em lote ou sem interface
-- ✅ **122 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
+- ✅ **124 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
   robustez (número colado em identificador, operadores repetidos sem espaço, comentário
   "aninhado", CRLF e CR solto, emoji, arquivo ANSI/UTF-16, locale turco...)
 - ✅ 7 arquivos de teste de integração, incluindo os exemplos exatos do enunciado
@@ -171,8 +171,8 @@ ambíguo - todas documentadas e testadas:
   exemplo de identificador); dígitos são só `0-9`. Letras de outros alfabetos (`π`, `日本`),
   dígitos de outros alfabetos e emoji fora de string/comentário viram erro léxico (um erro
   por caractere)
-- **`dowto`**: o enunciado lista `DOWTO` (provável erro de digitação de `downto`); as duas
-  grafias são palavras reservadas
+- **`downto`**: o enunciado lista `DOWTO`, tratado como erro de digitação de `downto` (a
+  grafia do Pascal). Só `downto` é palavra reservada; `dowto` é identificador
 - **Quebra de linha**: `\n`, `\r\n` e `\r` sozinho contam uma linha cada
 - **Codificação do arquivo**: UTF-8 (com ou sem BOM); se não for UTF-8 válido, lê como
   ANSI (ISO-8859-1), e UTF-16 com BOM também é reconhecido
