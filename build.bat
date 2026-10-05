@@ -50,7 +50,7 @@ if errorlevel 1 goto erro
 echo TokenFlow.jar gerado.
 
 if /i "%~1"=="teste" (
-    for %%S in (Fase3 Fase4 Fase5 Fase6 Absurda Robustez) do (
+    for %%S in (Fase3 Fase4 Fase5 Fase6 Absurda Robustez Afd) do (
         "!JAVA!" -cp out minipascal.lexico.verificacao.Verificacao%%S > out\resultado.txt
         set "RC=!errorlevel!"
         findstr /c:"FALHA" /c:"falha(s)" out\resultado.txt

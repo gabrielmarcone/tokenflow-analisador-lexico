@@ -29,7 +29,7 @@ printf 'Main-Class: minipascal.lexico.gui.MainApp\n' > out/manifest.txt
 echo "TokenFlow.jar gerado."
 
 if [ "$1" = "teste" ]; then
-    for suite in Fase3 Fase4 Fase5 Fase6 Absurda Robustez; do
+    for suite in Fase3 Fase4 Fase5 Fase6 Absurda Robustez Afd; do
         "$JAVA" -cp out "minipascal.lexico.verificacao.Verificacao$suite" > out/resultado.txt || { grep FALHA out/resultado.txt; echo "Verificacao$suite falhou."; exit 1; }
         grep "falha(s)" out/resultado.txt
     done

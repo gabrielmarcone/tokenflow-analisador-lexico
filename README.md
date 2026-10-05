@@ -8,7 +8,7 @@
 
 ![Java](https://img.shields.io/badge/Java-8-orange?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-Interface%20Gráfica-blue?logo=java&logoColor=white)
-![Testes](https://img.shields.io/badge/testes%20automatizados-124%20passing-success)
+![Testes](https://img.shields.io/badge/testes%20automatizados-142%20passing-success)
 
 </div>
 
@@ -43,7 +43,7 @@ derrubam o resto do arquivo.
 - ✅ Limite de 63 caracteres em identificadores (truncamento, não erro)
 - ✅ Interface gráfica: carregar um `.txt` **ou** digitar/colar código direto na tela
 - ✅ Modo linha de comando, pra rodar em lote ou sem interface
-- ✅ **124 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
+- ✅ **142 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
   robustez (número colado em identificador, operadores repetidos sem espaço, comentário
   "aninhado", CRLF e CR solto, emoji, arquivo ANSI/UTF-16, locale turco...)
 - ✅ 7 arquivos de teste de integração, incluindo os exemplos exatos do enunciado
@@ -143,6 +143,7 @@ java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase5     # come
 java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoFase6     # leitura/escrita de arquivo
 java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoAbsurda   # casos extremos/maldosos
 java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoRobustez  # Unicode, codificações, CLI
+java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoAfd       # AFD (tabela de transições) x analisador
 ```
 
 ## Arquivos de teste
