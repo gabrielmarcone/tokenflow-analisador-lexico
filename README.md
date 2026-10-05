@@ -30,6 +30,12 @@ derrubam o resto do arquivo.
 
 ![Tela do TokenFlow](docs/screenshot.png)
 
+## Autômato
+
+O analisador implementa o AFD abaixo (36 estados: 27 finais e 9 não finais).
+
+![AFD do analisador léxico](docs/automato_completo.jpg)
+
 ## Funcionalidades
 
 - ✅ Reconhece todas as classes léxicas do enunciado: palavra reservada, identificador,
@@ -46,7 +52,7 @@ derrubam o resto do arquivo.
 - ✅ **142 verificações automatizadas**, incluindo baterias dedicadas a casos absurdos e de
   robustez (número colado em identificador, operadores repetidos sem espaço, comentário
   "aninhado", CRLF e CR solto, emoji, arquivo ANSI/UTF-16, locale turco...)
-- ✅ 7 arquivos de teste de integração, incluindo os exemplos exatos do enunciado
+- ✅ 7 arquivos de teste de integração, incluindo os dois exemplos do enunciado
 
 ## Arquitetura
 
@@ -150,8 +156,8 @@ java -cp TokenFlow.jar minipascal.lexico.verificacao.VerificacaoAfd       # AFD 
 
 | Arquivo | O que cobre |
 |---|---|
-| `01_programa_simples.txt` | Exemplo básico do enunciado - saída conferida byte a byte contra o gabarito do professor |
-| `02_piloto.txt` | Programa maior, com `for`, strings e comentários |
+| `01_programa_simples.txt` | Primeiro exemplo do enunciado - a saída coincide com a listagem do enunciado, que omite três tokens do código (`>`, `y` e um `;`) |
+| `02_piloto.txt` | Segundo exemplo do enunciado (programa Piloto), com `for`, strings e comentários |
 | `03_com_erro.txt` | Caractere inválido proposital |
 | `04_numeros_extremos.txt` | Formatos numéricos no limite (exponentes, pontos múltiplos, número colado em texto) |
 | `05_operadores_colados.txt` | Operadores grudados sem espaço, repetidos, inválidos |
@@ -174,6 +180,8 @@ ambíguo - todas documentadas e testadas:
   por caractere)
 - **`downto`**: o enunciado lista `DOWTO`, tratado como erro de digitação de `downto` (a
   grafia do Pascal). Só `downto` é palavra reservada; `dowto` é identificador
+- **Separadores**: espaço, tabulação, `\f`, `\v` e quebras de linha são ignorados; qualquer outro
+  caractere fora da linguagem é erro léxico
 - **Quebra de linha**: `\n`, `\r\n` e `\r` sozinho contam uma linha cada
 - **Codificação do arquivo**: UTF-8 (com ou sem BOM); se não for UTF-8 válido, lê como
   ANSI (ISO-8859-1), e UTF-16 com BOM também é reconhecido
