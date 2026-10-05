@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Compara o AnalisadorLexico com o AFD descrito em docs/AFD_Analisador_Lexico.md.
+ * Compara o AnalisadorLexico com o AFD representado em docs/automato_completo.jpg
  * O AFD esta escrito aqui como tabela de transicoes (estados q0..q37) e nao
  * compartilha codigo com o analisador: o modelo avanca ate travar e volta ao
  * ultimo estado final visitado. Cada entrada passa pelos dois e as listas de
